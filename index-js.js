@@ -1,6 +1,12 @@
-import { createWalletClient, custom } from "https://esm.sh/viem";
+import {
+  createWalletClient,
+  createPublicClient,
+  custom,
+} from "https://esm.sh/viem";
 
 const connectButton = document.getElementById("connectButton");
+const fundButton = document.getElementById("fundButton");
+const ethAmountInput = document.getElementById("ethAmount");
 
 let walletClient;
 
@@ -16,4 +22,26 @@ async function connect() {
   }
 }
 
+async function fund() {
+  const ethAmount = ethAmountInput.value;
+  console.log(`Funding with ${ethAmount}...`);
+
+  if (typeof window.ethereum !== "undefined") {
+    walletClient = createWalletClient({
+      transport: custom(window.ethereum),
+    });
+    await walletClient.requestAddresses();
+
+    publicClient = createPublicClient({
+      transport: custom(window.ethereum),
+    });
+    await publicClient.simulateContract({
+      // address ???
+    });
+  } else {
+    connectButton.innerHTML = "Please install MetaMask!";
+  }
+}
+
 connectButton.onclick = connect;
+fundButton.onclick = fund;
